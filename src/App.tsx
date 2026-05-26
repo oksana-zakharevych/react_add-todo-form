@@ -18,13 +18,16 @@ export const App = () => {
   const [titleError, setTitleError] = React.useState(false);
   const [userError, setUserError] = React.useState(false);
 
-  function handleChangeTitle(e: React.ChangeEvent<HTMLInputElement>) {
-    setTitle(e.target.value);
+  function handleChangeTitle(event: React.ChangeEvent<HTMLInputElement>) {
+    const value = event.target.value;
+    const filteredValue = value.replace(/[^a-zA-Zа-яА-ЯёЁіІїЇєЄґҐ0-9 ]/g, '');
+
+    setTitle(filteredValue);
     setTitleError(false);
   }
 
-  function handleChangeUser(e: React.ChangeEvent<HTMLSelectElement>) {
-    setUserId(Number(e.target.value));
+  function handleChangeUser(event: React.ChangeEvent<HTMLSelectElement>) {
+    setUserId(Number(event.target.value));
     setUserError(false);
   }
 
@@ -45,8 +48,8 @@ export const App = () => {
     setUserError(false);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     validateForm();
 
     if (!title || userId === 0) {
@@ -54,13 +57,14 @@ export const App = () => {
     }
 
     const maxId = Math.max(...todos.map(todo => todo.id));
+    const user = usersFromServer.find(currUser => currUser.id === userId);
 
     const newTodo = {
       id: maxId + 1,
       title,
       userId,
       completed: false,
-      user: usersFromServer.find(user => user.id === userId),
+      user: user || null,
     };
 
     setTodos([...todos, newTodo]);
